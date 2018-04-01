@@ -37,9 +37,9 @@ def main():
                     p['home'] += coefficient * difference
                     p['draw'] = p['draw'] - (0.70 * coefficient * difference)
                     p['away'] = p['away'] - (0.30 * coefficient * difference)
-                elif result == 'A':
 
         row_num += 1
 
+    print matches
 
 main()

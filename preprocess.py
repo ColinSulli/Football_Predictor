@@ -1,6 +1,7 @@
 import csv
 import os
 import sys
+import shutil
 
 DATE_INDEX = 1
 HOME_TEAM = 2
@@ -14,19 +15,20 @@ BETTING_END = 43
 
 folder = "rawinput/"
 
+shutil.rmtree("processed/")
 os.mkdir("processed")
 
-for filename in os.listdir("rawinput/"):
+for filename in os.listdir(folder):
 	sys.stdout = open("processed/" + filename.replace(".csv", "") + "_processed.csv", 'w') 
 
 	with open(folder + filename, 'rb') as csvfile:
-		csvreader = csv.reader(csvfile, delimiter=',', quotechar=',')
+	    csvreader = csv.reader(csvfile, delimiter=',')
 
-		for line in csvreader:
-			try:
-				print line[DATE_INDEX] + ",",
-			except Exception:
-				continue
+	    for line in csvreader:
+	    	if line[DATE_INDEX] and line[DATE_INDEX] != "":
+	    		print line[DATE_INDEX] + ",",
+	    	else:
+	    		continue
 	    	print line[HOME_TEAM] + ",",
 	    	print line[AWAY_TEAM] + ",",
 	    	print line[FTHG] + ",",
@@ -42,10 +44,10 @@ for filename in os.listdir("rawinput/"):
 
 	    	try:
 		    	while(home_index <= BETTING_END):
-		    		avg_home_odds += float(line[home_index])
-		    		avg_draw_odds += float(line[draw_index])
-		    		avg_away_odds += float(line[away_index])
-
+		    		if line[home_index] and line[home_index] != "":
+			    		avg_home_odds += float(line[home_index])
+			    		avg_draw_odds += float(line[draw_index])
+			    		avg_away_odds += float(line[away_index])
 		    		#increment index
 		    		home_index += 3
 		    		draw_index += 3
