@@ -2,14 +2,9 @@ import csv
 import os
 path = os.getcwd()
 
-p_home = -1
-p_draw = -1
-p_away = -1
-
 def main():
-    seasons = [14, 15, 16, 17]
-    season = seasons[2]
-    season_file = open(path + '/Processed Data/EPL 2016-17.csv')
+    seasons = ['13-14', '14-15', '16-17', '17-18']
+    season_file = open(path + '/processed/14-15_processed.csv')
     csv_reader = csv.reader(season_file)
 
     matches = {}
@@ -17,29 +12,31 @@ def main():
     magnitudes = [0.1, 0.1, 0.15, 0.20, 0.40]
 
     for row in csv_reader:
+        p = {}
+        p['home'] = 0.0
+        p['draw'] = 0.0
+        p['away'] = 0.0
         if row_num > 1:
             home = row[1]
             away = row[2]
             home_goals = row[3]
             away_goals = row[4]
             result = row[5]
-            p_home = row[6]
-            p_draw = row[7]
-            p_away = row[8]
+            p['home'] = row[6]
+            p['draw'] = row[7]
+            p['away'] = row[8]
+            matches[home] = {}
+            matches[home][away] = {}
             goal_diff = [abs(home_goals - away_goals)]
             if goal_diff[0] > 4:
                 goal_diff[0] = 4
-            matches[home] = {}
-            matches[home][away] = {}
-            if p_home <= 0.2:
-                if result == 'H':
-                    difference = (1 - p_home)
-                    coefficient = magnitudes[goal_diff[0]]
-                    p_home += coefficient * difference
-                    p_draw = p_draw - (0.70 * coefficient * difference)
-                    p_away = p_away - (0.30 * coefficient * difference)
-                elif result == 'D':
-
+            difference = (1 - p['home'])
+            coefficient = magnitudes[goal_diff[0]]
+            if p['home'] <= 0.2:
+                if result == 'H' or result == 'D':
+                    p['home'] += coefficient * difference
+                    p['draw'] = p['draw'] - (0.70 * coefficient * difference)
+                    p['away'] = p['away'] - (0.30 * coefficient * difference)
                 elif result == 'A':
 
         row_num += 1

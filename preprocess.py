@@ -20,13 +20,13 @@ for filename in os.listdir("rawinput/"):
 	sys.stdout = open("processed/" + filename.replace(".csv", "") + "_processed.csv", 'w') 
 
 	with open(folder + filename, 'rb') as csvfile:
-	    csvreader = csv.reader(csvfile, delimiter=',', quotechar=',')
+		csvreader = csv.reader(csvfile, delimiter=',', quotechar=',')
 
-	    for line in csvreader:
-	    	try:
-	    		print line[DATE_INDEX] + ",",
-	    	except Exception:
-	    		continue
+		for line in csvreader:
+			try:
+				print line[DATE_INDEX] + ",",
+			except Exception:
+				continue
 	    	print line[HOME_TEAM] + ",",
 	    	print line[AWAY_TEAM] + ",",
 	    	print line[FTHG] + ",",
