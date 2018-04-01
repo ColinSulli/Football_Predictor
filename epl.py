@@ -7,6 +7,9 @@ def main():
     matches = {}
     magnitudes = [0.1, 0.1, 0.15, 0.20, 0.40]
 
+    output_file = open('reactions.csv', 'w')
+    output_file.write('Season, Home, Away, HG, AG, Result, Before: P[Home], Before: P[Draw], Before: P[Away], Before: Sum, After: P[Home], After: P[Draw], After: P[Away], After: Sum\n')
+
     for season in seasons:
         season_file = open(path + '/processed/' + season + '_processed.csv')
         csv_reader = csv.reader(season_file)
@@ -30,14 +33,16 @@ def main():
                 goal_diff = [abs(home_goals - away_goals)]
                 if goal_diff[0] > 4:
                     goal_diff[0] = 4
-                alter_probabilities(p, result, goal_diff, magnitudes)
+                output_file.write(season + ', ' + home + ', ' + away + ', ' + str(home_goals) + ', ' + str(away_goals) + ', ' + result + ', ' + str(p['home']) + ', ' + str(p['draw']) + ', ' + str(p['away']) + ', ' + str(p['home'] + p['draw'] + p['away']) + ', ')
+                p = alter_probabilities(p, result, goal_diff, magnitudes)
                 matches[season][home][away] = [p['home'], p['draw'], p['away']]
+                output_file.write(str(p['home']) + ', ' + str(p['draw']) + ', ' + str(p['away']) + ', ' + str(p['home'] + p['draw'] + p['away']) + '\n')
             row_num += 1
 
 
 def alter_probabilities(p, result, goal_diff, magnitudes):
     win_diff = 1 - p['home']
-    draw_diff = 1 - p['home']
+    draw_diff = 1 - p['draw']
     away_diff = 1 - p['away']
     coefficient = magnitudes[goal_diff[0]]
     if p['home'] <= 0.2:
@@ -69,6 +74,6 @@ def alter_probabilities(p, result, goal_diff, magnitudes):
             away_increase = 0.7 * coefficient * draw_diff
             p['away'] += away_increase
             p['home'] = p['home'] - draw_increase - away_increase
-
+    return p
 
 main()
