@@ -2,24 +2,32 @@ import csv
 import os
 
 matches = {}
-seasons = ['13-14', '14-15', '16-17', '17-18']
+seasons = ['13-14', '14-15', '15-16', '16-17']
 
 def get_prob(home, away):
 
-    #0 - home, 1- draw, 2-away
+    HOME = 0
+    DRAW = 1
+    AWAY = 2
     HOME_WEIGHTING = .6
     AWAY_WEIGHTING = .4
     weighting = [.1, .2, .3, .4]
     
-    sum_probs = 0.0
+    home_sum_probs = 0.0
+    draw_sum_probs = 0.0
+    away_sum_probs = 0.0
     sum_weighting = 0
     for index in range(0, len(seasons)):
         curr_season = seasons[index]
         if home in matches[curr_season] and away in matches[curr_season][home]:
             sum_weighting += weighting[index]
-            sum_probs += (weighting(index) * (HOME_WEIGHTING * matches[curr_season][home][away][0] + AWAY_WEIGHTING * matches[curr_season][away][home][0]))
-    return float((sum_probs / sum_weighting))
-
+            print matches[curr_season][home][away][0]
+            print matches[curr_season][away][home][0]
+            home_sum_probs += (weighting[index] * (HOME_WEIGHTING * matches[curr_season][home][away][HOME] + AWAY_WEIGHTING * matches[curr_season][away][home][HOME]))
+            draw_sum_probs += (weighting[index] * (HOME_WEIGHTING * matches[curr_season][home][away][DRAW] + AWAY_WEIGHTING * matches[curr_season][away][home][DRAW]))
+            away_sum_probs += (weighting[index] * (HOME_WEIGHTING * matches[curr_season][home][away][AWAY] + AWAY_WEIGHTING * matches[curr_season][away][home][AWAY]))
+    return float((home_sum_probs / sum_weighting)), float((draw_sum_probs / sum_weighting)), float((away_sum_probs / sum_weighting))
+# 
 def read_files():
 
     path = os.getcwd()
@@ -47,7 +55,11 @@ def read_files():
                 p['home'] = float(row[6])
                 p['draw'] = float(row[7])
                 p['away'] = float(row[8])
-                matches[season][home] = {}
+
+                if home not in matches[season]:
+                    matches[season][home] = {}
+
+                # matches[season][home] = {}
                 goal_diff = [abs(home_goals - away_goals)]
                 if goal_diff[0] > 4:
                     goal_diff[0] = 4
@@ -103,7 +115,4 @@ def alter_probabilities(p, result, goal_diff, magnitudes):
 
 def main():
     read_files()
-    print matches['14-15']
-    # print matches['13-14']['Man United']['Liverpool']
-    # get_prob("Man United", "Liverpool")
 main()
