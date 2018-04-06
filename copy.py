@@ -1,12 +1,14 @@
 import csv
 import os
+path = os.getcwd()
+
+output_file = open('reactions.csv', 'w')
 
 matches = {}
-seasons = ['13-14', '14-15', '16-17', '17-18']
+seasons = ['13-14', '14-15', '15-16', '16-17']
 
 def get_prob(home, away):
 
-    #0 - home, 1- draw, 2-away
     HOME_WEIGHTING = .6
     AWAY_WEIGHTING = .4
     weighting = [.1, .2, .3, .4]
@@ -17,13 +19,12 @@ def get_prob(home, away):
         curr_season = seasons[index]
         if home in matches[curr_season] and away in matches[curr_season][home]:
             sum_weighting += weighting[index]
-            sum_probs += (weighting(index) * (HOME_WEIGHTING * matches[curr_season][home][away][0] + AWAY_WEIGHTING * matches[curr_season][away][home][0]))
+            sum_probs += (weighting(index) * (HOME_WEIGHTING * matches[curr_season][home][away] + AWAY_WEIGHTING * matches[curr_season][away][home]))
+
+
     return float((sum_probs / sum_weighting))
 
 def read_files():
-
-    path = os.getcwd()
-    output_file = open(path + '/processed/' + 'reactions.csv', 'w')
     magnitudes = [0.1, 0.1, 0.15, 0.20, 0.40]
 
     output_file.write('Season, Home, Away, HG, AG, Result, Before: P[Home], Before: P[Draw], Before: P[Away], Before: Sum, After: P[Home], After: P[Draw], After: P[Away], After: Sum\n')
@@ -39,8 +40,8 @@ def read_files():
                 p['home'] = 0.0
                 p['draw'] = 0.0
                 p['away'] = 0.0
-                home = str(row[1].strip())
-                away = str(row[2].strip())
+                home = str(row[1])
+                away = str(row[2])
                 home_goals = int(row[3])
                 away_goals = int(row[4])
                 result = (row[5]).strip()
@@ -56,7 +57,6 @@ def read_files():
                 matches[season][home][away] = [p['home'], p['draw'], p['away']]
                 output_file.write(str(p['home']) + ', ' + str(p['draw']) + ', ' + str(p['away']) + ', ' + str(p['home'] + p['draw'] + p['away']) + '\n')
             row_num += 1
-
 
 def alter_probabilities(p, result, goal_diff, magnitudes):
     win_diff = 1 - p['home']
@@ -103,7 +103,5 @@ def alter_probabilities(p, result, goal_diff, magnitudes):
 
 def main():
     read_files()
-    print matches['14-15']
-    # print matches['13-14']['Man United']['Liverpool']
-    # get_prob("Man United", "Liverpool")
+
 main()
