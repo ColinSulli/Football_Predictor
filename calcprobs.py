@@ -21,8 +21,6 @@ def get_prob(home, away):
         curr_season = seasons[index]
         if home in matches[curr_season] and away in matches[curr_season][home]:
             sum_weighting += weighting[index]
-            print matches[curr_season][home][away][0]
-            print matches[curr_season][away][home][0]
             home_sum_probs += (weighting[index] * (HOME_WEIGHTING * matches[curr_season][home][away][HOME] + AWAY_WEIGHTING * matches[curr_season][away][home][HOME]))
             draw_sum_probs += (weighting[index] * (HOME_WEIGHTING * matches[curr_season][home][away][DRAW] + AWAY_WEIGHTING * matches[curr_season][away][home][DRAW]))
             away_sum_probs += (weighting[index] * (HOME_WEIGHTING * matches[curr_season][home][away][AWAY] + AWAY_WEIGHTING * matches[curr_season][away][home][AWAY]))
@@ -31,7 +29,7 @@ def get_prob(home, away):
 def read_files():
 
     path = os.getcwd()
-    output_file = open(path + '/processed/' + 'reactions.csv', 'w')
+    output_file = open(path + '/processed/reactions.csv', 'w')
     magnitudes = [0.1, 0.1, 0.15, 0.20, 0.40]
 
     output_file.write('Season, Home, Away, HG, AG, Result, Before: P[Home], Before: P[Draw], Before: P[Away], Before: Sum, After: P[Home], After: P[Draw], After: P[Away], After: Sum\n')
@@ -43,23 +41,19 @@ def read_files():
         matches[season] = {}
         for row in csv_reader:
             if row_num > 1:
-                p = {}
-                p['home'] = 0.0
-                p['draw'] = 0.0
-                p['away'] = 0.0
                 home = str(row[1].strip())
                 away = str(row[2].strip())
                 home_goals = int(row[3])
                 away_goals = int(row[4])
                 result = (row[5]).strip()
+
+                p = {}
                 p['home'] = float(row[6])
                 p['draw'] = float(row[7])
                 p['away'] = float(row[8])
-
                 if home not in matches[season]:
                     matches[season][home] = {}
 
-                # matches[season][home] = {}
                 goal_diff = [abs(home_goals - away_goals)]
                 if goal_diff[0] > 4:
                     goal_diff[0] = 4
