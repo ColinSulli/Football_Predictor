@@ -19,7 +19,10 @@ shutil.rmtree("processed/")
 os.mkdir("processed")
 
 for filename in os.listdir(folder):
-	sys.stdout = open("processed/" + filename.replace(".csv", "") + "_processed.csv", 'w') 
+	if "csv" not in filename:
+		continue
+
+	sys.stdout = open("processed/" + filename.replace(".csv", "") + "_processed.csv", 'w')
 
 	with open(folder + filename, 'rb') as csvfile:
 	    csvreader = csv.reader(csvfile, delimiter=',')
