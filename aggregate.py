@@ -14,7 +14,8 @@ AWAY_WEIGHTING = .4
 folder = 'rawinput/'
 filename = '17-18.csv'
 
-def recent_form():
+#Return score of recent form for home team and away team
+def get_recent_form(home_input, away_input):
 	last_5 = {}
 	csvfile = open(folder + filename, 'rb')
 	csvreader = csv.reader(csvfile, delimiter=',')
@@ -46,9 +47,28 @@ def recent_form():
 			if len(last_5[team]) > 5:
 				last_5[team] = last_5[team][-5:]
 
-	return last_5
-print recent_form()
+	home_recent_form = 0.0
+	away_recent_form = 0.0
 
+
+	for result in last_5[home_input]:
+		home_recent_form += result
+	for result in last_5[away_input]:
+		away_recent_form += result
+
+	return home_recent_form, away_recent_form
+
+
+def include_recent_form(home, away, weighting):
+
+	home_form, away_form = get_recent_form(home, away) / 5
+
+	home_odds += weighting * (home_form / 5)
+	away_odds += weighting * (away_form / 5)
+	
+
+
+	
 
 
 

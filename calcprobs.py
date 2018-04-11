@@ -1,6 +1,6 @@
 import csv
 import os
-
+from aggregate import get_recent_form
 matches = {}
 seasons = ['13-14', '14-15', '15-16', '16-17']
 
@@ -81,14 +81,15 @@ def alter_probabilities(p, result, goal_diff, magnitudes):
             p['home'] = p['home'] - draw_increase - away_increase
     return
 
-
 def get_prob(home, away):
     HOME = 0
     DRAW = 1
     AWAY = 2
     HOME_WEIGHTING = .6
     AWAY_WEIGHTING = .4
+    RECENCY_WEIGHTING = .25
     weighting = [.1, .2, .3, .4]
+
 
     home_sum_probs = 0.0
     draw_sum_probs = 0.0
@@ -103,8 +104,42 @@ def get_prob(home, away):
             away_sum_probs += (weighting[index] * (HOME_WEIGHTING * matches[curr_season][home][away][AWAY] + AWAY_WEIGHTING * matches[curr_season][away][home][AWAY]))
     if sum_weighting == 0:
         return 0, 0, 0
-    return float((home_sum_probs / sum_weighting)), float((draw_sum_probs / sum_weighting)), float((away_sum_probs / sum_weighting))
 
+
+    home_recent, away_recent = get_recent_form(home, away)
+
+    home_probs = float((home_sum_probs / sum_weighting))
+    draw_probs = float((draw_sum_probs / sum_weighting))
+    away_probs = float((away_sum_probs / sum_weighting))
+
+    # return home_probs, draw_probs, away_probs
+
+    if (home_probs < RECENCY_WEIGHTING and home_recent <= -2) or (away_probs < RECENCY_WEIGHTING and away_recent <= -2):
+        RECENCY_WEIGHTING = .1
+
+    if (home_probs < RECENCY_WEIGHTING and home_recent >= 2) or (away_probs < RECENCY_WEIGHTING and away_recent >= 2): 
+        RECENCY_WEIGHTING = .35
+
+
+    home_probs += (home_recent / 5) * RECENCY_WEIGHTING
+    away_probs += (away_recent / 5) * RECENCY_WEIGHTING
+
+
+    #make sure between 1 and 0    
+    home_probs = min(1, home_probs)
+    away_probs = min(1, away_probs)
+
+    home_probs = max(0, home_probs)
+    home_probs = max(0, home_probs)
+
+    sum_all = home_probs + draw_probs + away_probs
+
+
+    # print home_probs
+    # print away_probs
+    # print sum_all
+
+    return home_probs / sum_all, draw_probs / sum_all, away_probs / sum_all
 
 def evaluate():
     path = os.getcwd()
@@ -194,6 +229,7 @@ def appraise(score, home, draw, away, result):
 
 def main():
     read_files()
+    # print get_prob("Man City", "West Brom")
     evaluate()
 
 
