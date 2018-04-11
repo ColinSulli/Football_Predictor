@@ -14,7 +14,8 @@ AWAY_WEIGHTING = .4
 folder = 'rawinput/'
 filename = '17-18.csv'
 
-#Return score of recent form for home team and away team
+
+
 def get_recent_form(home_input, away_input):
 	last_5 = {}
 	csvfile = open(folder + filename, 'rb')
@@ -27,6 +28,9 @@ def get_recent_form(home_input, away_input):
 		home = line[HOME_TEAM]
 		away = line[AWAY_TEAM]
 		result = line[RESULT].strip()
+
+		if home == home_input and away == away_input: #stop when you reach the current app
+			break
 
 		if home not in last_5:
 			last_5[home] = []
@@ -50,6 +54,9 @@ def get_recent_form(home_input, away_input):
 	home_recent_form = 0.0
 	away_recent_form = 0.0
 
+	#If less than 5 games have happened just exit out
+	if home_input not in last_5 or len(last_5[home_input]) < 5:
+		return "NONE", "NONE"
 
 	for result in last_5[home_input]:
 		home_recent_form += result
@@ -57,14 +64,6 @@ def get_recent_form(home_input, away_input):
 		away_recent_form += result
 
 	return home_recent_form, away_recent_form
-
-
-def include_recent_form(home, away, weighting):
-
-	home_form, away_form = get_recent_form(home, away) / 5
-
-	home_odds += weighting * (home_form / 5)
-	away_odds += weighting * (away_form / 5)
 	
 
 

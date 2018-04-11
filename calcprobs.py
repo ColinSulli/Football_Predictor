@@ -106,13 +106,19 @@ def get_prob(home, away):
         return 0, 0, 0
 
 
-    home_recent, away_recent = get_recent_form(home, away)
-
     home_probs = float((home_sum_probs / sum_weighting))
     draw_probs = float((draw_sum_probs / sum_weighting))
     away_probs = float((away_sum_probs / sum_weighting))
 
-    # return home_probs, draw_probs, away_probs
+    # try: 
+    #     home_recent, away_recent = get_recent_form(home, away)
+    #     home_recent = float(home_recent)
+    #     away_recent = float(away_recent)
+    # except Exception as e: #if 5 games haven't happened already then just return without counting for them
+    #     # print e
+    #     # print "exception"
+    #     # print get_recent_form(home, away)
+    return home_probs, draw_probs, away_probs
 
     if (home_probs < RECENCY_WEIGHTING and home_recent <= -2) or (away_probs < RECENCY_WEIGHTING and away_recent <= -2):
         RECENCY_WEIGHTING = .1
@@ -229,7 +235,7 @@ def appraise(score, home, draw, away, result):
 
 def main():
     read_files()
-    # print get_prob("Man City", "West Brom")
+    # print get_prob("Swansea", "Newcastle")
     evaluate()
 
 
