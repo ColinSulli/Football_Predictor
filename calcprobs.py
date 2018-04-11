@@ -108,27 +108,55 @@ def get_prob(home, away):
 
 def evaluate():
     path = os.getcwd()
-    input_file = open(path + '/processed/17-18_processed.csv', 'r')
-    output_file = open(path + '/processed/results.csv', 'w')
-    output_file.write('home, away, result, our_score, agency_score, our_home, our_draw, our_away, agency_home, agency_draw, agency_away\n')
+    input_file = open(path + '/rawinput/17-18.csv', 'r')
     csv_reader = csv.reader(input_file)
-    agency_score = 0.0
+    output_file = open(path + '/processed/results.csv', 'w')
+    header = 'home, away, result, us, B365, BW, IW, LB, PS, WH, VC\n'
+    output_file.write(header)
+
     our_score = 0.0
+    B365_score = 0.0
+    BW_score = 0.0
+    IW_score = 0.0
+    LB_score = 0.0
+    PS_score = 0.0
+    WH_score = 0.0
+    VC_score = 0.0
 
     row_num = 1
     for row in csv_reader:
         if row_num > 1:
-            home = str(row[1]).strip()
-            away = str(row[2]).strip()
-            result = (row[5]).strip()
-            agency_h = float(row[6])
-            agency_d = float(row[7])
-            agency_a = float(row[8])
+            home = str(row[2]).strip()
+            away = str(row[3]).strip()
+            result = (row[6]).strip()
+
             our_h, our_d, our_a = get_prob(home, away)
             if our_h > 0 and our_d > 0 and our_a > 0:
                 our_score = appraise(our_score, our_h, our_d, our_a, result)
-                agency_score = appraise(agency_score, agency_h, agency_d, agency_a, result)
-                output_file.write(home + ', ' + away + ', ' + result + ', ' + str(our_score) + ', ' + str(agency_score) + ', ' + str(our_h) + ', ' +  str(our_d) + ', ' + str(our_a) + ', ' + str(agency_h) + ', ' + str(agency_d) + ', ' + str(agency_a) + '\n')
+
+                b365_base = float(row[23]) + float(row[24]) + float(row[25])
+                B365_score = appraise(B365_score, float(row[25])/b365_base, float(row[24])/b365_base, float(row[23])/b365_base, result)
+
+                bw_base = float(row[26]) + float(row[27]) + float(row[28])
+                BW_score = appraise(BW_score, float(row[28])/bw_base, float(row[27])/bw_base, float(row[26])/bw_base, result)
+
+                iw_base = float(row[29]) + float(row[30]) + float(row[31])
+                IW_score = appraise(IW_score, float(row[31])/iw_base, float(row[30])/iw_base, float(row[29])/iw_base, result)
+
+                lb_base = float(row[32]) + float(row[33]) + float(row[34])
+                LB_score = appraise(LB_score, float(row[34])/lb_base, float(row[33])/lb_base, float(row[32])/lb_base, result)
+
+                ps_base = float(row[35]) + float(row[36]) + float(row[37])
+                PS_score = appraise(PS_score, float(row[37])/ps_base, float(row[36])/ps_base, float(row[35])/ps_base, result)
+
+                wh_base = float(row[38]) + float(row[39]) + float(row[40])
+                WH_score = appraise(WH_score, float(row[40])/wh_base, float(row[39])/wh_base, float(row[38])/wh_base, result)
+
+                vc_base = float(row[41]) + float(row[42]) + float(row[43])
+                VC_score = appraise(VC_score, float(row[43])/vc_base, float(row[42])/vc_base, float(row[41])/vc_base, result)
+
+                line = home + ', ' + away + ',' + result + ', ' + str(our_score) + ', ' + str(B365_score) + ', ' + str(BW_score) + ', ' + str(IW_score) + ', ' + str(LB_score) + ', ' + str(PS_score) + ', ' +str(WH_score) + ', ' +str(VC_score) + '\n'
+                output_file.write(line)
         row_num += 1
     input_file.close()
     output_file.close()
