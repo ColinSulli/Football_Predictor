@@ -85,11 +85,11 @@ def get_prob(home, away):
     HOME = 0
     DRAW = 1
     AWAY = 2
-    HOME_WEIGHTING = .6
-    AWAY_WEIGHTING = .4
-    RECENCY_WEIGHTING = .25
+    # CONSTANTS CAN CHANGE
+    HOME_WEIGHTING = .8
+    AWAY_WEIGHTING = .2
+    RECENCY_WEIGHTING = .50
     weighting = [.1, .2, .3, .4]
-
 
     home_sum_probs = 0.0
     draw_sum_probs = 0.0
@@ -110,21 +110,21 @@ def get_prob(home, away):
     draw_probs = float((draw_sum_probs / sum_weighting))
     away_probs = float((away_sum_probs / sum_weighting))
 
-    # try: 
-    #     home_recent, away_recent = get_recent_form(home, away)
-    #     home_recent = float(home_recent)
-    #     away_recent = float(away_recent)
-    # except Exception as e: #if 5 games haven't happened already then just return without counting for them
-    #     # print e
-    #     # print "exception"
-    #     # print get_recent_form(home, away)
-    return home_probs, draw_probs, away_probs
+    try: 
+        home_recent, away_recent = get_recent_form(home, away)
+        home_recent = float(home_recent)
+        away_recent = float(away_recent)
+    except Exception as e: #if 5 games haven't happened already then just return without counting for them
+        # print e
+        # print "exception"
+        # print get_recent_form(home, away)
+        return home_probs, draw_probs, away_probs
 
     if (home_probs < RECENCY_WEIGHTING and home_recent <= -2) or (away_probs < RECENCY_WEIGHTING and away_recent <= -2):
-        RECENCY_WEIGHTING = .1
+        RECENCY_WEIGHTING = RECENCY_WEIGHTING - .1
 
     if (home_probs < RECENCY_WEIGHTING and home_recent >= 2) or (away_probs < RECENCY_WEIGHTING and away_recent >= 2): 
-        RECENCY_WEIGHTING = .35
+        RECENCY_WEIGHTING = RECENCY_WEIGHTING + .3
 
 
     home_probs += (home_recent / 5) * RECENCY_WEIGHTING
@@ -151,7 +151,7 @@ def evaluate():
     path = os.getcwd()
     input_file = open(path + '/rawinput/17-18.csv', 'r')
     csv_reader = csv.reader(input_file)
-    output_file = open(path + '/processed/results.csv', 'w')
+    output_file = open(path + '/processed/results_change_conditionals.csv', 'w')
     header = 'home, away, result, us, B365, BW, IW, LB, PS, WH, VC\n'
     output_file.write(header)
 
