@@ -86,9 +86,9 @@ def get_prob(home, away):
     DRAW = 1
     AWAY = 2
     # CONSTANTS CAN CHANGE
-    HOME_WEIGHTING = .8
-    AWAY_WEIGHTING = .2
-    RECENCY_WEIGHTING = .50
+    HOME_WEIGHTING = .90
+    AWAY_WEIGHTING = .10
+    RECENCY_WEIGHTING = .40
     weighting = [.1, .2, .3, .4]
 
     home_sum_probs = 0.0
@@ -118,13 +118,14 @@ def get_prob(home, away):
         # print e
         # print "exception"
         # print get_recent_form(home, away)
-        return home_probs, draw_probs, away_probs
+        return 0,0,0
+        # return home_probs, draw_probs, away_probs
 
     if (home_probs < RECENCY_WEIGHTING and home_recent <= -2) or (away_probs < RECENCY_WEIGHTING and away_recent <= -2):
-        RECENCY_WEIGHTING = RECENCY_WEIGHTING - .1
+        RECENCY_WEIGHTING = .1
 
     if (home_probs < RECENCY_WEIGHTING and home_recent >= 2) or (away_probs < RECENCY_WEIGHTING and away_recent >= 2): 
-        RECENCY_WEIGHTING = RECENCY_WEIGHTING + .3
+        RECENCY_WEIGHTING = .5
 
 
     home_probs += (home_recent / 5) * RECENCY_WEIGHTING
@@ -151,7 +152,7 @@ def evaluate():
     path = os.getcwd()
     input_file = open(path + '/rawinput/17-18.csv', 'r')
     csv_reader = csv.reader(input_file)
-    output_file = open(path + '/processed/results_change_conditionals.csv', 'w')
+    output_file = open(path + '/processed/results_onlypast5.csv', 'w')
     header = 'home, away, result, us, B365, BW, IW, LB, PS, WH, VC\n'
     output_file.write(header)
 
