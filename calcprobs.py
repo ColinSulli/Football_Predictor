@@ -118,8 +118,8 @@ def get_prob(home, away):
         # print e
         # print "exception"
         # print get_recent_form(home, away)
-        return 0,0,0
-        # return home_probs, draw_probs, away_probs
+        # return 0,0,0
+        return home_probs, draw_probs, away_probs
 
     if (home_probs < RECENCY_WEIGHTING and home_recent <= -2) or (away_probs < RECENCY_WEIGHTING and away_recent <= -2):
         RECENCY_WEIGHTING = .1
@@ -152,7 +152,7 @@ def evaluate():
     path = os.getcwd()
     input_file = open(path + '/rawinput/17-18.csv', 'r')
     csv_reader = csv.reader(input_file)
-    output_file = open(path + '/processed/results_onlypast5.csv', 'w')
+    output_file = open(path + '/processed/test.csv', 'w')
     header = 'home, away, result, us, B365, BW, IW, LB, PS, WH, VC\n'
     output_file.write(header)
 
@@ -172,32 +172,45 @@ def evaluate():
             away = str(row[3]).strip()
             result = (row[6]).strip()
 
+            # if home == "Liverpool" or away == "Liverpool":
+            # # if home == "Liverpool" or away == "Liverpool" or home == "West Brom" or away == "West Brom" or home == "Watford" and away == "Watford":
+            #     continue
+
             our_h, our_d, our_a = get_prob(home, away)
             if our_h > 0 and our_d > 0 and our_a > 0:
+                our_diff = appraise(our_score, our_h, our_d, our_a, result) - our_score
                 our_score = appraise(our_score, our_h, our_d, our_a, result)
 
                 b365_base = float(row[23]) + float(row[24]) + float(row[25])
+                b365_diff = appraise(B365_score, float(row[25])/b365_base, float(row[24])/b365_base, float(row[23])/b365_base, result) - B365_score
                 B365_score = appraise(B365_score, float(row[25])/b365_base, float(row[24])/b365_base, float(row[23])/b365_base, result)
 
                 bw_base = float(row[26]) + float(row[27]) + float(row[28])
+                bw_diff = appraise(BW_score, float(row[28])/bw_base, float(row[27])/bw_base, float(row[26])/bw_base, result) - BW_score
                 BW_score = appraise(BW_score, float(row[28])/bw_base, float(row[27])/bw_base, float(row[26])/bw_base, result)
 
                 iw_base = float(row[29]) + float(row[30]) + float(row[31])
+                iw_diff = appraise(IW_score, float(row[31])/iw_base, float(row[30])/iw_base, float(row[29])/iw_base, result) - IW_score
                 IW_score = appraise(IW_score, float(row[31])/iw_base, float(row[30])/iw_base, float(row[29])/iw_base, result)
 
                 lb_base = float(row[32]) + float(row[33]) + float(row[34])
+                lb_diff = appraise(LB_score, float(row[34])/lb_base, float(row[33])/lb_base, float(row[32])/lb_base, result) - LB_score
                 LB_score = appraise(LB_score, float(row[34])/lb_base, float(row[33])/lb_base, float(row[32])/lb_base, result)
 
                 ps_base = float(row[35]) + float(row[36]) + float(row[37])
+                ps_diff = appraise(PS_score, float(row[37])/ps_base, float(row[36])/ps_base, float(row[35])/ps_base, result) - PS_score
                 PS_score = appraise(PS_score, float(row[37])/ps_base, float(row[36])/ps_base, float(row[35])/ps_base, result)
 
                 wh_base = float(row[38]) + float(row[39]) + float(row[40])
+                wh_diff = appraise(WH_score, float(row[40])/wh_base, float(row[39])/wh_base, float(row[38])/wh_base, result) - WH_score
                 WH_score = appraise(WH_score, float(row[40])/wh_base, float(row[39])/wh_base, float(row[38])/wh_base, result)
 
                 vc_base = float(row[41]) + float(row[42]) + float(row[43])
+                vc_diff = appraise(VC_score, float(row[43])/vc_base, float(row[42])/vc_base, float(row[41])/vc_base, result) - VC_score
                 VC_score = appraise(VC_score, float(row[43])/vc_base, float(row[42])/vc_base, float(row[41])/vc_base, result)
 
-                line = home + ', ' + away + ',' + result + ', ' + str(our_score) + ', ' + str(B365_score) + ', ' + str(BW_score) + ', ' + str(IW_score) + ', ' + str(LB_score) + ', ' + str(PS_score) + ', ' +str(WH_score) + ', ' +str(VC_score) + '\n'
+                line = home + ', ' + away + ',' + result + ', ' + str(our_diff) + ', ' + str(b365_diff) + ', ' + str(bw_diff) + ', ' + str(iw_diff) + ', ' + str(lb_diff) + ', ' + str(ps_diff) + ', ' +str(wh_diff) + ', ' +str(vc_diff) + '\n'
+
                 output_file.write(line)
         row_num += 1
     input_file.close()

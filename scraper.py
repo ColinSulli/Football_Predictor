@@ -1,3 +1,4 @@
+#Program that crawls the betting data website for relevant data regarding the Premier League and downloads it into csv files
 import os
 import sys
 from bs4 import BeautifulSoup
@@ -5,23 +6,29 @@ import urlparse
 import requests
 import urllib2
 
-current= "http://www.football-data.co.uk/englandm.php" 
-page = urllib2.urlopen(current)
+output_folder = "rawinput"
+
+url= "http://www.football-data.co.uk/englandm.php" 
+page = urllib2.urlopen(url)
 soup = BeautifulSoup(page)
 links = soup.find_all('a')
 
 
 #get root of url
-parent = urlparse.urljoin(current, '/')
+parent = urlparse.urljoin(url, '/')
 
-#season to start off with
-season = 17
+#season to start off with (works backwards to look at data for each season)
+season = 17 
 
+#go through all links to see which have relevant info, then download it into csv files
+os.system('mkdir ' + output_folder)
+os.chdir(os.getcwd() + '/' + output_folder)
 for link in links:
 	contents = str(link.contents[0])
-	if "Premier League" in contents: #check to see if betting data is for CSV files
+	if "Premier League" in contents: #make sure only looking at Premier League data
 		rel = link.attrs['href']
 		full = parent + rel
+		print(os.getcwd())
 		os.system('wget -O'+ str(season)+'-'+str(season+1)+ '.csv %s' % full)
 
 		if season == 13: #go until 13-14 season
