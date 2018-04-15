@@ -1,3 +1,5 @@
+#Reads from the csv files in rawinput and pre-processes them accordingly. Spits
+#output to the processed folder.
 import csv
 import os
 import sys

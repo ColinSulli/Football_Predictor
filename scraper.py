@@ -5,8 +5,9 @@ from bs4 import BeautifulSoup
 import urlparse
 import requests
 import urllib2
+import shutil
 
-output_folder = "rawinput"
+dirpath = "rawinput"
 
 url= "http://www.football-data.co.uk/englandm.php" 
 page = urllib2.urlopen(url)
@@ -20,9 +21,13 @@ parent = urlparse.urljoin(url, '/')
 #season to start off with (works backwards to look at data for each season)
 season = 17 
 
+
+if os.path.exists(dirpath) and os.path.isdir(dirpath):
+    shutil.rmtree(dirpath)
+os.system('mkdir ' + dirpath)
+os.chdir(os.getcwd() + '/' + dirpath)
+
 #go through all links to see which have relevant info, then download it into csv files
-os.system('mkdir ' + output_folder)
-os.chdir(os.getcwd() + '/' + output_folder)
 for link in links:
 	contents = str(link.contents[0])
 	if "Premier League" in contents: #make sure only looking at Premier League data
