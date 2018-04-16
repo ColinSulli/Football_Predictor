@@ -35,6 +35,8 @@ for filename in os.listdir(folder):
 	    		print line[DATE_INDEX] + ",",
 	    	else:
 	    		continue
+
+	    	# print values to csv file
 	    	print line[HOME_TEAM] + ",",
 	    	print line[AWAY_TEAM] + ",",
 	    	print line[FTHG] + ",",
@@ -49,6 +51,7 @@ for filename in os.listdir(folder):
 	    	away_index = draw_index + 1
 
 	    	try:
+	    		# sum all of the home, draw, and away betting ods
 		    	while(home_index <= BETTING_END):
 		    		if line[home_index] and line[home_index] != "":
 			    		avg_home_odds += float(line[home_index])
@@ -59,19 +62,23 @@ for filename in os.listdir(folder):
 		    		draw_index += 3
 		    		away_index += 3
 		    	
+		    	# average the 3-way odds
 		    	avg_home_odds /= int(float(BETTING_END + 1 - BETTING_START) / 3)
 		    	avg_draw_odds /= int(float(BETTING_END + 1 - BETTING_START) / 3)
 		    	avg_away_odds /= int(float(BETTING_END + 1 - BETTING_START) / 3)
 
+		    	# calculate the 3-way probabilities
 		    	avg_home_prob = (avg_away_odds) / (avg_home_odds + avg_draw_odds + avg_away_odds)
 		    	avg_draw_prob = (avg_draw_odds) / (avg_home_odds + avg_draw_odds + avg_away_odds)
 		    	avg_away_prob = (avg_home_odds) / (avg_home_odds + avg_draw_odds + avg_away_odds)
 
+		    	# print the csv file
 		    	print str(avg_home_prob) + ",",
 		    	print str(avg_draw_prob) + ",",
 		    	print str(avg_away_prob) + ",",
 		    	print
 	    	except ValueError:
+	    		# prints three remaining headers
 	    		print "AVGHOMEPROB,",
 	    		print "AVGDRAWPROB,",
 	    		print "AVGAWAYPROB",
