@@ -1,34 +1,35 @@
 #Reads from the csv files in rawinput and pre-processes them accordingly. Spits
 #output to the processed folder.
-import csv
-import os
-import sys
-import shutil
+import csv, os, sys, shutil
 
+# constants to locate csv columns
 DATE_INDEX = 1
 HOME_TEAM = 2
 AWAY_TEAM = 3
 FTHG = 4
 FTAG = 5
 FTR = 6
-
 BETTING_START = 23
 BETTING_END = 43
 
+# redirect into correct folder
 folder = "rawinput/"
-
 shutil.rmtree("processed/")
 os.mkdir("processed")
 
+# iterate through every csv file in folder
 for filename in os.listdir(folder):
+
 	if "csv" not in filename:
 		continue
-    ##
+
 	sys.stdout = open("processed/" + filename.replace(".csv", "") + "_processed.csv", 'w')
 
+	# analyze csv file
 	with open(folder + filename, 'rb') as csvfile:
 	    csvreader = csv.reader(csvfile, delimiter=',')
 
+	    # iterate through every line in file
 	    for line in csvreader:
 	    	if line[DATE_INDEX] and line[DATE_INDEX] != "":
 	    		print line[DATE_INDEX] + ",",
