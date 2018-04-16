@@ -23,7 +23,7 @@ os.mkdir("processed")
 for filename in os.listdir(folder):
 	if "csv" not in filename:
 		continue
-
+    ##
 	sys.stdout = open("processed/" + filename.replace(".csv", "") + "_processed.csv", 'w')
 
 	with open(folder + filename, 'rb') as csvfile:
