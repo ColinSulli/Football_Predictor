@@ -7,10 +7,10 @@ seasons = ['13-14', '14-15', '15-16', '16-17']
 
 def read_files():
     path = os.getcwd()
-    output_file = open(path + '/processed/reactions.csv', 'w')
+    # output_file = open(path + '/processed/reactions.csv', 'w')
     magnitudes = [0.1, 0.1, 0.15, 0.20, 0.40]
 
-    output_file.write('Season, Home, Away, HG, AG, Result, Before: P[Home], Before: P[Draw], Before: P[Away], Before: Sum, After: P[Home], After: P[Draw], After: P[Away], After: Sum\n')
+    # output_file.write('Season, Home, Away, HG, AG, Result, Before: P[Home], Before: P[Draw], Before: P[Away], Before: Sum, After: P[Home], After: P[Draw], After: P[Away], After: Sum\n')
 
     for season in seasons:
         season_file = open(path + '/processed/' + season + '_processed.csv', 'r')
@@ -35,12 +35,12 @@ def read_files():
                 goal_diff = [abs(home_goals - away_goals)]
                 if goal_diff[0] > 4:
                     goal_diff[0] = 4
-                output_file.write(season + ', ' + home + ', ' + away + ', ' + str(home_goals) + ', ' + str(away_goals) + ', ' + result + ', ' + str(p['home']) + ', ' + str(p['draw']) + ', ' + str(p['away']) + ', ' + str(p['home'] + p['draw'] + p['away']) + ', ')
+                # output_file.write(season + ', ' + home + ', ' + away + ', ' + str(home_goals) + ', ' + str(away_goals) + ', ' + result + ', ' + str(p['home']) + ', ' + str(p['draw']) + ', ' + str(p['away']) + ', ' + str(p['home'] + p['draw'] + p['away']) + ', ')
                 alter_probabilities(p, result, goal_diff, magnitudes)
                 matches[season][home][away] = [p['home'], p['draw'], p['away']]
-                output_file.write(str(p['home']) + ', ' + str(p['draw']) + ', ' + str(p['away']) + ', ' + str(p['home'] + p['draw'] + p['away']) + '\n')
+                # output_file.write(str(p['home']) + ', ' + str(p['draw']) + ', ' + str(p['away']) + ', ' + str(p['home'] + p['draw'] + p['away']) + '\n')
             row_num += 1
-    output_file.close()
+    # output_file.close()
     return
 
 
@@ -115,10 +115,6 @@ def get_prob(home, away):
         home_recent = float(home_recent)
         away_recent = float(away_recent)
     except Exception as e: #if 5 games haven't happened already then just return without counting for them
-        # print e
-        # print "exception"
-        # print get_recent_form(home, away)
-        # return 0,0,0
         return home_probs, draw_probs, away_probs
 
     if (home_probs < RECENCY_WEIGHTING and home_recent <= -2) or (away_probs < RECENCY_WEIGHTING and away_recent <= -2):
@@ -141,18 +137,18 @@ def get_prob(home, away):
 
     sum_all = home_probs + draw_probs + away_probs
 
-
-    # print home_probs
-    # print away_probs
-    # print sum_all
-
     return home_probs / sum_all, draw_probs / sum_all, away_probs / sum_all
 
 def evaluate():
     path = os.getcwd()
     input_file = open(path + '/rawinput/17-18.csv', 'r')
     csv_reader = csv.reader(input_file)
-    output_file = open(path + '/processed/test.csv', 'w')
+
+    if os.path.exists("final") and os.path.isdir("final"):
+        shutil.rmtree("final")
+    os.system('mkdir ' + "final")
+
+    output_file = open(path + '/final/output.csv', 'w')
     header = 'home, away, result, us, B365, BW, IW, LB, PS, WH, VC\n'
     output_file.write(header)
 
@@ -249,7 +245,6 @@ def appraise(score, home, draw, away, result):
 
 def main():
     read_files()
-    # print get_prob("Swansea", "Newcastle")
     evaluate()
 
 

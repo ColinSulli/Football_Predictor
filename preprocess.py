@@ -13,9 +13,11 @@ BETTING_START = 23
 BETTING_END = 43
 
 # redirect into correct folder
+dirpath = "processed"
 folder = "rawinput/"
-shutil.rmtree("processed/")
-os.mkdir("processed")
+if os.path.exists(dirpath) and os.path.isdir(dirpath):
+    shutil.rmtree(dirpath)
+os.mkdir(dirpath)
 
 # iterate through every csv file in folder
 for filename in os.listdir(folder):
@@ -23,7 +25,7 @@ for filename in os.listdir(folder):
 	if "csv" not in filename:
 		continue
 
-	sys.stdout = open("processed/" + filename.replace(".csv", "") + "_processed.csv", 'w')
+	sys.stdout = open(dirpath + "/" + filename.replace(".csv", "") + "_processed.csv", 'w')
 
 	# analyze csv file
 	with open(folder + filename, 'rb') as csvfile:
