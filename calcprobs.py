@@ -7,6 +7,7 @@ seasons = ['13-14', '14-15', '15-16', '16-17']
 
 def read_files():
     path = os.getcwd()
+    #Reactions is a csv with intermediate output for debugging. Uncomment if you want to see it
     # output_file = open(path + '/processed/reactions.csv', 'w')
     magnitudes = [0.1, 0.1, 0.15, 0.20, 0.40]
 
@@ -85,7 +86,7 @@ def get_prob(home, away):
     HOME = 0
     DRAW = 1
     AWAY = 2
-    # CONSTANTS CAN CHANGE
+    # CONSTANTS CAN CHANGE. DETERMINED THROUGH TESTING
     HOME_WEIGHTING = .90
     AWAY_WEIGHTING = .10
     RECENCY_WEIGHTING = .40
@@ -110,6 +111,7 @@ def get_prob(home, away):
     draw_probs = float((draw_sum_probs / sum_weighting))
     away_probs = float((away_sum_probs / sum_weighting))
 
+    #Get data for recent form if it exists
     try: 
         home_recent, away_recent = get_recent_form(home, away)
         home_recent = float(home_recent)
@@ -117,13 +119,14 @@ def get_prob(home, away):
     except Exception as e: #if 5 games haven't happened already then just return without counting for them
         return home_probs, draw_probs, away_probs
 
+    #Change recency weighting if the team has had very poor form and does well or has very poor form and does poorly
     if (home_probs < RECENCY_WEIGHTING and home_recent <= -2) or (away_probs < RECENCY_WEIGHTING and away_recent <= -2):
         RECENCY_WEIGHTING = .1
 
     if (home_probs < RECENCY_WEIGHTING and home_recent >= 2) or (away_probs < RECENCY_WEIGHTING and away_recent >= 2): 
         RECENCY_WEIGHTING = .5
 
-
+    #Incorporate recent form into odds
     home_probs += (home_recent / 5) * RECENCY_WEIGHTING
     away_probs += (away_recent / 5) * RECENCY_WEIGHTING
 
@@ -167,10 +170,6 @@ def evaluate():
             home = str(row[2]).strip()
             away = str(row[3]).strip()
             result = (row[6]).strip()
-
-            # if home == "Liverpool" or away == "Liverpool":
-            # # if home == "Liverpool" or away == "Liverpool" or home == "West Brom" or away == "West Brom" or home == "Watford" and away == "Watford":
-            #     continue
 
             our_h, our_d, our_a = get_prob(home, away)
             if our_h > 0 and our_d > 0 and our_a > 0:
