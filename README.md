@@ -30,7 +30,7 @@ This is the main python file that calulcates the probabilities for every match t
 #aggregate.py
 Is run when calcprobs.py is called. This function determines a team's recent form, i.e. how the team has been perforiming over the past 5 games played. The function then takes this data and adjusts the 3-way probabilites for the match.
 
-## Data Folders
+## Data Folders/Files
 #Rawinput
 Gets the raw output from scraper.py. These are 5 csv files, one for each Premier League season.
 
@@ -39,4 +39,7 @@ Folder that contains all of the processed csv files (once again 5 csv files, one
 
 #Final
 Folder that contains the final output after calcprobs.py is run
+
+#Analysis.xls is the output file (from above), with some conditional formatting to highlight the results. This file splits the season into thirds, and compares our performance with the other betting agencies. At each third we look at the median performance (for a random game how will does each agency do) and the sum (how well each model did cumulatively across the third of that season). The higher the score in either case, the better the model's performance. 
+
 
