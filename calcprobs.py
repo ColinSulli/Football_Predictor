@@ -7,12 +7,18 @@ seasons = ['13-14', '14-15', '15-16', '16-17']
 
 def read_files():
     path = os.getcwd()
-    #Reactions is a csv with intermediate output for debugging. Uncomment if you want to see it
+    # Reactions is a csv with intermediate output for debugging. Uncomment if you want to see it
     # output_file = open(path + '/processed/reactions.csv', 'w')
+
+
+    # Coefficients that correspond to the convincingness of a resuly. Index in based on goal difference
     magnitudes = [0.1, 0.1, 0.15, 0.20, 0.40]
 
     # output_file.write('Season, Home, Away, HG, AG, Result, Before: P[Home], Before: P[Draw], Before: P[Away], Before: Sum, After: P[Home], After: P[Draw], After: P[Away], After: Sum\n')
 
+    # this for loop is essentially to build up the 'matches' dictionary, which contains the altered probability
+    # distribution for each game, by 'reacting' to the match outcome accordingly.
+    # the changes to the probabilities are handled in the alter_probabilities function further below.
     for season in seasons:
         season_file = open(path + '/processed/' + season + '_processed.csv', 'r')
         csv_reader = csv.reader(season_file)
@@ -51,6 +57,9 @@ def alter_probabilities(p, result, goal_diff, magnitudes):
     away_diff = 1 - p['away']
     coefficient = magnitudes[goal_diff[0]]
 
+    # classifies the profile of the match based on the shape of the distribution
+    # uses match result to determine the direction the probabilities move
+    # uses the goal difference from 'magntitudes' to determine extent to which probabilities move
     if p['home'] <= 0.2:
         if result == 'H' or result == 'D':
             home_increase = coefficient * win_diff
@@ -86,6 +95,7 @@ def get_prob(home, away):
     HOME = 0
     DRAW = 1
     AWAY = 2
+
     # CONSTANTS CAN CHANGE. DETERMINED THROUGH TESTING
     HOME_WEIGHTING = .90
     AWAY_WEIGHTING = .10
@@ -111,7 +121,7 @@ def get_prob(home, away):
     draw_probs = float((draw_sum_probs / sum_weighting))
     away_probs = float((away_sum_probs / sum_weighting))
 
-    #Get data for recent form if it exists
+    # Get data for recent form if it exists
     try: 
         home_recent, away_recent = get_recent_form(home, away)
         home_recent = float(home_recent)
@@ -119,19 +129,18 @@ def get_prob(home, away):
     except Exception as e: #if 5 games haven't happened already then just return without counting for them
         return home_probs, draw_probs, away_probs
 
-    #Change recency weighting if the team has had very poor form and does well or has very poor form and does poorly
+    # Change recency weighting if the team has had very poor form and does well or has very poor form and does poorly
     if (home_probs < RECENCY_WEIGHTING and home_recent <= -2) or (away_probs < RECENCY_WEIGHTING and away_recent <= -2):
         RECENCY_WEIGHTING = .1
 
     if (home_probs < RECENCY_WEIGHTING and home_recent >= 2) or (away_probs < RECENCY_WEIGHTING and away_recent >= 2): 
         RECENCY_WEIGHTING = .5
 
-    #Incorporate recent form into odds
+    # Incorporate recent form into odds
     home_probs += (home_recent / 5) * RECENCY_WEIGHTING
     away_probs += (away_recent / 5) * RECENCY_WEIGHTING
 
-
-    #make sure between 1 and 0    
+    # make sure between 1 and 0
     home_probs = min(1, home_probs)
     away_probs = min(1, away_probs)
 
@@ -165,6 +174,10 @@ def evaluate():
     VC_score = 0.0
 
     row_num = 1
+
+    # retrieves our probability distribution along with each of the 7 agencies
+    # accumulates a score for us and each of the 7 agencies by assessing predictions against each match outcome
+    # the 'appraise' function assigns a score to each prediction
     for row in csv_reader:
         if row_num > 1:
             home = str(row[2]).strip()
@@ -214,8 +227,10 @@ def evaluate():
 
 
 def appraise(score, home, draw, away, result):
+    # first identifies prediction
     max_prob = max(home, draw, away)
 
+    # determines if right or wrong, and increases / decreases score accordingly.
     if (max_prob == home):
         if (result == 'H'):
             score += home
