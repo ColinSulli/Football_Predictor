@@ -2,7 +2,7 @@ import os
 import sys
 import csv
 
-#Get a triple dict
+#Indexes of content in rawinput csv file
 HOME_TEAM = 2
 AWAY_TEAM = 3
 RESULT = 6
@@ -15,23 +15,25 @@ folder = 'rawinput/'
 filename = '17-18.csv'
 
 
-
+#For a given home team and a given away team gets their form in the past 5 games by looking
+#at the data from the current season.
 def get_recent_form(home_input, away_input):
 	last_5 = {}
 	csvfile = open(folder + filename, 'rb')
 	csvreader = csv.reader(csvfile, delimiter=',')
 
 	for line in csvreader:
-		if "Date" in line:
+		if "Date" in line: #skips header row
 			continue
 
 		home = line[HOME_TEAM]
 		away = line[AWAY_TEAM]
 		result = line[RESULT].strip()
-
+		#Go until the current game
 		if home == home_input and away == away_input: #stop when you reach the current app
 			break
 
+		#Go through each row and get relevant data
 		if home not in last_5:
 			last_5[home] = []
 		if away not in last_5:
