@@ -1,25 +1,39 @@
-# FootballProject: 
+# FootballProject:
 
 A model to predict outcomes of English Premier League football matches, as part of a final project for EECS 486.
+
+Before you run our programs on caen, you may have to pip install the following libraries:
+        - BeautifulSoup
+        - urlparse
+        - requests
+        - urllib2
+        - shutil
 
 Order of Execution on Terminal/Command Line:
 1. Run scraper.py to get the raw csv files in rawinput folder (python scraper.py)
 2. Run preprocess.py to process the data and have output in processed folder (python preprocess.py)
-3. 
+3. Run calcprobs.py to calculate the probabilites for every match that has been played in the current 2017/18 season (python calprobs.py)
 
+## Python Files
 #scraper.py
 Program that crawls the betting data website for relevant data regarding the Premier League and downloads it into csv files. Output folder directory is hardcoded in the file. Needs internet access to run. Caveat: needs requests, urllib, etc.
 
 #preprocess.py
-#Reads from the csv files in rawinput and pre-processes them accordingly. Spits output to the processed folder.
+Reads from the csv files in rawinput and pre-processes them accordingly. Spits output to the processed folder.
+
 #calcprobs.py
+This is the main python file that calulcates the probabilities for every match that has been played in the current 2017/18 season. This function outputs the probabilities to a csv file called output.csv located in the folder called final.
 
 #aggregate.py
+Is run when calcprobs.py is called. This function determines a team's recent form, i.e. how the team has been perforiming over the past 5 games played. The function then takes this data and adjusts the 3-way probabilites for the match.
 
-
-Data:
+## Data Folders
 #Rawinput
-- Gets the raw output from scraper.py
+Gets the raw output from scraper.py. These are 5 csv files, one for each Premier League season.
 
+#Processed
+Folder that contains all of the processed csv files (once again 5 csv files, one fore each Premier League season).
 
-Your project will have to include a complete implementation of your approach.  The software will have to be written in Python, and it will have to run on a Linux platform.  You can use external libraries as needed(provided they do not make the project trivial).  The grade for this part will be based on the quality of yourimplementation (which includes code documentation and a complete README file).  Please also include allthe datasets used in the project, including raw and annotated data (depending on the project).
+#Final
+Folder that contains the final output after calcprobs.py is run
+
