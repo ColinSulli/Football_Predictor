@@ -2,12 +2,15 @@
 
 A model to predict outcomes of English Premier League football matches, as part of a final project for EECS 486.
 
-Before you run our programs on caen, you may have to pip install the following libraries:
-        - BeautifulSoup
-        - urlparse
-        - requests
-        - urllib2
-        - shutil
+Before you run our programs on caen, type the following commands into the command line in order to import the proper libraries:
+        module load python
+        python
+        >>> from bs4 import BeautifulSoup
+        >>> import urlparse
+        >>> import requests
+        >>> import urllib2
+        >>> import shutil
+        >>> exit()
 
 Order of Execution on Terminal/Command Line:
 1. Run scraper.py to get the raw csv files in rawinput folder (python scraper.py)
