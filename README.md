@@ -1,6 +1,6 @@
 # FootballProject:
 
-A model to predict outcomes of English Premier League football matches, as part of a final project for EECS 486.
+A model to predict outcomes of English Premier League football matches.
 
 Before you run our programs on caen, type the following commands into the command line in order to import the proper libraries:
         module load python
